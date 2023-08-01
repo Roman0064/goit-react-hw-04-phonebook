@@ -1,24 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { nanoid } from 'nanoid';
 import css from './ContactForm.module.css'
 
-class ContactForm extends React.Component {
-  state = {
-    name: '',
-    number: ''
-  }
+const ContactForm = ({ contacts, onAddContact}) => {
 
-  handleChange = (event) => {
-    const { name, value } = event.currentTarget;
-    this.setState({ [name]: value });
+  const [ name, setName ] = useState('');
+  const [ number, setNumber ] = useState('');
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    if(name === 'name'){
+      setName(value);
+    }else if(name === 'number'){
+      setNumber(value);
+    }
   };
 
-  handleSubmit = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
-    const { name, number } = this.state;
-    const { contacts } = this.props;
 
     if (name.trim() === '' || number.trim() === '') {
       return;
@@ -37,15 +38,13 @@ class ContactForm extends React.Component {
       number: number
     }
 
-    this.setState({ name: '', number: '' });
-    this.props.onAddContact(newContact);
+    setName('');
+    setNumber('');
+    onAddContact(newContact);
   };
 
-  render() {
-    const { name, number } = this.state;
-
     return (
-      <form onSubmit={this.handleSubmit} className={css.form_wrapper}>
+      <form onSubmit={handleSubmit} className={css.form_wrapper}>
         <p className={css.name}>Name</p>
         <input
           type="text"
@@ -54,7 +53,7 @@ class ContactForm extends React.Component {
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
           value={name}
-          onChange={this.handleChange}
+          onChange={handleChange}
           className={css.input}
         />
         <p className={css.number}>Number</p>
@@ -65,7 +64,7 @@ class ContactForm extends React.Component {
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
           value={number}
-          onChange={this.handleChange}
+          onChange={handleChange}
           className={css.input}
         />
         <br />
@@ -73,7 +72,6 @@ class ContactForm extends React.Component {
       </form>
     );
   };
-};
 
 ContactForm.propTypes = {
   contacts: PropTypes.arrayOf(
